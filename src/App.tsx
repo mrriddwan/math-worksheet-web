@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 import { questionAnswers } from "./constants/questionAnswers";
+import { RiResetLeftFill } from "react-icons/ri";
+import { GiConfirmed } from "react-icons/gi";
 
 function App() {
   const [player, setPlayer] = useState({
@@ -26,23 +28,33 @@ function App() {
           <h2>Score</h2>
           <h3>{player.score}</h3>
         </div>
+        <button className="w-max rounded-2xl px-3 py-2 bg-amber-200 flex self-end">
+          <RiResetLeftFill className="my-auto mr-2 " />
+          Reset
+        </button>
       </div>
 
-      <div>Circle the correct answer</div>
+      <div className="flex w-full justify-center">
+        <div className=" w-[70%]">Circle the correct answer</div>
+      </div>
       {/*question*/}
       <div className="grid grid-cols-2">
         {questionAnswers.map((qA) => {
           return (
-            <div key={qA.number} className="my-2 text-left mx-auto">
+            <div key={qA.number} className="my-1 text-left mx-auto">
               <div className="py-2">
                 {qA.number} rounded off to the nearest {nearestValue.toString()}{" "}
                 is
               </div>
-              <ol className="text-left w-full mx-auto py-2">
+              <ol className="text-left w-full mx-auto py-1">
                 {qA.answers.map((answer, index) => {
                   return (
-                    <li key={`${index}-${answer}`} className="py-1 flex cursor-pointer w-max">
-                      {alphabetNumbering[index]} {answer}
+                    <li
+                      key={`${index}-${answer}`}
+                      className="py-1 flex cursor-pointer w-max"
+                    >
+                      <div className="mr-3">{alphabetNumbering[index]}</div>{" "}
+                      {answer}
                     </li>
                   );
                 })}
@@ -52,10 +64,13 @@ function App() {
         })}
       </div>
 
+      <button className="w-max mx-auto rounded-2xl px-3 py-2 bg-green-200 flex text-center">
+        <GiConfirmed className="my-auto mr-2 " />
+        Submit
+      </button>
+
       {/*copyright*/}
-      <div className="py-3">
-        © www.mathinenglish.com
-      </div>
+      <div className="py-3">© www.mathinenglish.com</div>
     </div>
   );
 }
