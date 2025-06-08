@@ -9,15 +9,12 @@ function App() {
 
   const [nearestValue, setNearestValue] = useState(10);
 
-  // Single state object to track all selected answers
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<number, number>
   >({});
 
-  // Memoize alphabet numbering to avoid recreation on each render
   const alphabetNumbering = useMemo(() => ["a.", "b.", "c.", "d."], []);
 
-  // Memoized function to handle answer selection
   const handleAnswerSelect = useCallback(
     (questionNumber: number, answer: number) => {
       setSelectedAnswers((prev) => ({
