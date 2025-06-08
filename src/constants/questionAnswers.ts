@@ -9,7 +9,7 @@ export const questionAnswers = [
     },
     {
         number: 64,
-        answers: [64, 70, 70],
+        answers: [64, 70, 60],
     },
     {
         number: 98,
