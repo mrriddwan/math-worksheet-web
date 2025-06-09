@@ -8,7 +8,8 @@ function App() {
     score: 0,
   });
 
-  const [nearestValue, setNearestValue] = useState(10);
+  // const [nearestValue, setNearestValue] = useState(10);
+  const nearestValue = 10;
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<number, number>
   >({});
