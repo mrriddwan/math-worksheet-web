@@ -29,7 +29,6 @@ export const useLeaderBoard = () => {
       });
 
       setTopPlayers(leaderboardData);
-      console.log("Top 3 players:", leaderboardData);
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
       setTopPlayers([]);
