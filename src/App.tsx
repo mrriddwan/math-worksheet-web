@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { questionAnswers } from "./constants/questionAnswers";
 import NameModal from "./components/NameModal";
 import { QuestionAnswers } from "./components/QuestionAnswers";
 import { useQuizGame } from "./hooks/useQuizGame";
+import { useLeaderBoard } from "./hooks/useLeaderBoard";
 
 function App() {
   const {
@@ -23,6 +24,9 @@ function App() {
     handleNameSubmit,
     handleKeyPress,
   } = useQuizGame();
+
+  const { fetchLeaderboards, loadingLeaderboard, topPlayers } =
+    useLeaderBoard();
 
   const questionComponents = useMemo(() => {
     return questionAnswers.map((qA) => {
@@ -63,6 +67,18 @@ function App() {
       return "bg-red-100 text-red-800 border border-red-200 rounded-lg px-3 py-2";
     }
   };
+
+  useEffect(() => {
+    fetchLeaderboards();
+  }, []);
+
+  useEffect(() => {
+    if (answerRevealed) {
+      setTimeout(() => {
+        fetchLeaderboards();
+      }, 1000);
+    }
+  }, [answerRevealed]);
 
   return (
     <div className="bg-white min-h-screen w-screen relative">
@@ -107,41 +123,82 @@ function App() {
         Rounding Off to Nearest {nearestValue}
       </div>
 
-      {/*name and score*/}
-      <div className="flex flex-col p-3 px-4 sm:px-6 justify-center">
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 justify-center mb-3">
-          <div className="text-center">
-            <h2 className="font-semibold text-sm sm:text-base">Name</h2>
-            <h3 className="text-sm sm:text-base">{player.name}</h3>
+      <div className="flex flex-row w-full">
+        {/*name and score*/}
+        <div className="flex flex-col p-3 px-4 sm:px-6 justify-center w-11/12">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 justify-center mb-3">
+            <div className="text-center">
+              <h2 className="font-semibold text-sm sm:text-base">Name</h2>
+              <h3 className="text-sm sm:text-base">{player.name}</h3>
+            </div>
+            <div className="text-center">
+              <h2 className="font-semibold text-sm sm:text-base">Score</h2>
+              <h3 className={`text-sm sm:text-base ${getScoreColorClass()}`}>
+                {player.score} / {questionAnswers.length}
+              </h3>
+            </div>
           </div>
-          <div className="text-center">
-            <h2 className="font-semibold text-sm sm:text-base">Score</h2>
-            <h3 className={`text-sm sm:text-base ${getScoreColorClass()}`}>
-              {player.score} / {questionAnswers.length}
-            </h3>
-          </div>
-        </div>
 
-        <div className="flex w-full justify-center px-4">
-          <div className="w-full sm:w-[70%] text-center text-base sm:text-lg font-medium mb-4">
-            Circle the correct answer
+          <div className="flex w-full justify-center px-4">
+            <div className="w-full sm:w-[70%] text-center text-base sm:text-lg font-medium mb-4">
+              Circle the correct answer
+            </div>
           </div>
-        </div>
 
-        <div className="justify-center mx-auto">
-          <button
-            className="w-max rounded-2xl px-3 py-2 sm:px-4 sm:py-2 bg-amber-200 flex cursor-pointer hover:bg-amber-300 transition-colors text-sm sm:text-base"
-            onClick={handleReset}
-          >
-            <svg
-              className="my-auto mr-2 w-3 h-3 sm:w-4 sm:h-4"
-              fill="currentColor"
-              viewBox="0 0 24 24"
+          <div className="justify-center mx-auto">
+            <button
+              className="w-max rounded-2xl px-3 py-2 sm:px-4 sm:py-2 bg-amber-200 flex cursor-pointer hover:bg-amber-300 transition-colors text-sm sm:text-base"
+              onClick={handleReset}
             >
-              <path d="M4 12a8 8 0 0 1 14.93-4H16v2h6V4h-2v2.07A10 10 0 1 0 22 12h-2a8 8 0 0 1-16 0z" />
-            </svg>
-            Reset
-          </button>
+              <svg
+                className="my-auto mr-2 w-3 h-3 sm:w-4 sm:h-4"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M4 12a8 8 0 0 1 14.93-4H16v2h6V4h-2v2.07A10 10 0 1 0 22 12h-2a8 8 0 0 1-16 0z" />
+              </svg>
+              Reset
+            </button>
+          </div>
+        </div>
+
+        {/*leaderboard */}
+        <div className="w-1/12 p-2">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2">
+            <h3 className="text-xs font-bold text-yellow-800 mb-2 text-center">
+              🏆 Top 3
+            </h3>
+            {loadingLeaderboard && (
+              <div className="text-xs text-gray-500 text-center">
+                Loading...
+              </div>
+            )}
+
+            {!loadingLeaderboard && topPlayers.length > 0 ? (
+              <div className="space-y-1">
+                {topPlayers.map((player, index) => (
+                  <div
+                    key={player.id}
+                    className="text-xs bg-white rounded p-1 border"
+                  >
+                    <div className="font-semibold text-yellow-700">
+                      #{index + 1}
+                    </div>
+                    <div className="truncate" title={player.player}>
+                      {player.player}
+                    </div>
+                    <div className="text-yellow-600 font-bold">
+                      {player.score}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-xs text-gray-500 text-center">
+                No scores yet
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
