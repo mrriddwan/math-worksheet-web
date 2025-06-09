@@ -11,6 +11,7 @@ export const useQuizGame = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [tempName, setTempName] = useState("");
   const [showNameModal, setShowNameModal] = useState(true);
+  const [answerRevealed, setAnswerRevealed] = useState(false);
 
   const alphabetNumbering = useMemo(() => ["a.", "b.", "c.", "d."], []);
 
@@ -27,6 +28,7 @@ export const useQuizGame = () => {
   const handleReset = useCallback(() => {
     setPlayer((prev) => ({ ...prev, score: 0 }));
     setSelectedAnswers({});
+    setAnswerRevealed(false);
   }, []);
 
   const calculateCorrectAnswer = useCallback(
@@ -45,6 +47,10 @@ export const useQuizGame = () => {
       }
     });
     setPlayer((prev) => ({ ...prev, score: correctCount }));
+    setAnswerRevealed(true);
+    
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [selectedAnswers, nearestValue, calculateCorrectAnswer]);
 
   const handleNameSubmit = useCallback(() => {
@@ -64,18 +70,23 @@ export const useQuizGame = () => {
   );
 
   return {
-    // State
+    // states
     player,
     nearestValue,
     selectedAnswers,
     tempName,
     showNameModal,
     alphabetNumbering,
+    answerRevealed,
     
-    // State setters
+    // values
+    totalQuestions: questionAnswers.length,
+    answeredCount: Object.keys(selectedAnswers).length,
+    
+    // setter
     setTempName,
     
-    // Methods
+    // methods
     handleAnswerSelect,
     handleReset,
     calculateCorrectAnswer,
