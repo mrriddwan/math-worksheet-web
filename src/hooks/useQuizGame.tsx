@@ -1,5 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { questionAnswers } from "../constants/questionAnswers";
+import { firestoreDB } from "../../firebaseConfig";
+import { addDoc, collection } from "firebase/firestore";
 
 export const useQuizGame = () => {
   const [player, setPlayer] = useState({
@@ -8,7 +10,9 @@ export const useQuizGame = () => {
   });
 
   const nearestValue = 10;
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
+  const [selectedAnswers, setSelectedAnswers] = useState<
+    Record<number, number>
+  >({});
   const [tempName, setTempName] = useState("");
   const [showNameModal, setShowNameModal] = useState(true);
   const [answerRevealed, setAnswerRevealed] = useState(false);
@@ -38,7 +42,7 @@ export const useQuizGame = () => {
     []
   );
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     let correctCount = 0;
     questionAnswers.forEach((qA) => {
       const correctAnswer = calculateCorrectAnswer(qA.number, nearestValue);
@@ -46,12 +50,22 @@ export const useQuizGame = () => {
         correctCount++;
       }
     });
+
     setPlayer((prev) => ({ ...prev, score: correctCount }));
     setAnswerRevealed(true);
-    
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [selectedAnswers, nearestValue, calculateCorrectAnswer]);
+
+    try {
+      await addDoc(collection(firestoreDB, "leaderboard"), {
+        player: player.name,
+        score: correctCount,
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [selectedAnswers, nearestValue, calculateCorrectAnswer, player.name]);
 
   const handleNameSubmit = useCallback(() => {
     if (tempName.trim()) {
@@ -78,14 +92,14 @@ export const useQuizGame = () => {
     showNameModal,
     alphabetNumbering,
     answerRevealed,
-    
+
     // values
     totalQuestions: questionAnswers.length,
     answeredCount: Object.keys(selectedAnswers).length,
-    
+
     // setter
     setTempName,
-    
+
     // methods
     handleAnswerSelect,
     handleReset,
