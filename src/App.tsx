@@ -125,7 +125,7 @@ function App() {
 
       <div className="flex flex-row w-full">
         {/*name and score*/}
-        <div className="flex flex-col p-3 px-4 sm:px-6 justify-center w-11/12">
+        <div className="flex flex-col p-3 px-4 sm:px-6 justify-center w-full">
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 justify-center mb-3">
             <div className="text-center">
               <h2 className="font-semibold text-sm sm:text-base">Name</h2>
@@ -163,7 +163,7 @@ function App() {
         </div>
 
         {/*leaderboard */}
-        <div className="w-1/12 p-2">
+        <div className="w-2/12 p-2 top-10 absolute">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2">
             <h3 className="text-xs font-bold text-yellow-800 mb-2 text-center">
               🏆 Top 3
