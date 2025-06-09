@@ -49,10 +49,12 @@ function App() {
     answerRevealed,
   ]);
 
-  const scorePercentage = answerRevealed ? (player.score / questionAnswers.length) * 100 : 0;
+  const scorePercentage = answerRevealed
+    ? (player.score / questionAnswers.length) * 100
+    : 0;
   const getScoreColorClass = () => {
     if (!answerRevealed) return "";
-    
+
     if (scorePercentage >= 80) {
       return "bg-green-100 text-green-800 border border-green-200 rounded-lg px-3 py-2";
     } else if (scorePercentage >= 60) {
@@ -68,12 +70,14 @@ function App() {
       <div className="fixed left-2 top-1/2 transform -translate-y-1/2 z-50 hidden sm:block">
         <div className="bg-white shadow-lg rounded-lg border border-gray-200 p-3 min-w-[120px]">
           <div className="text-center">
-            <div className="text-xs font-medium text-gray-600 mb-1">Progress</div>
+            <div className="text-xs font-medium text-gray-600 mb-1">
+              Progress
+            </div>
             <div className="text-lg font-bold text-blue-600">
               {answeredCount}/{totalQuestions}
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-              <div 
+              <div
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
               ></div>
@@ -89,7 +93,7 @@ function App() {
           </span>
           <div className="flex-1 ml-3">
             <div className="w-full bg-blue-200 rounded-full h-2">
-              <div 
+              <div
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
               ></div>
@@ -118,6 +122,12 @@ function App() {
           </div>
         </div>
 
+        <div className="flex w-full justify-center px-4">
+          <div className="w-full sm:w-[70%] text-center text-base sm:text-lg font-medium mb-4">
+            Circle the correct answer
+          </div>
+        </div>
+
         <div className="justify-center mx-auto">
           <button
             className="w-max rounded-2xl px-3 py-2 sm:px-4 sm:py-2 bg-amber-200 flex cursor-pointer hover:bg-amber-300 transition-colors text-sm sm:text-base"
@@ -132,12 +142,6 @@ function App() {
             </svg>
             Reset
           </button>
-        </div>
-      </div>
-
-      <div className="flex w-full justify-center px-4">
-        <div className="w-full sm:w-[70%] text-center text-base sm:text-lg font-medium mb-4">
-          Circle the correct answer
         </div>
       </div>
 
