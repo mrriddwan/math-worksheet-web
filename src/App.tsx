@@ -1,104 +1,39 @@
-import { useState, useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { questionAnswers } from "./constants/questionAnswers";
 import NameModal from "./components/NameModal";
+import { QuestionAnswers } from "./components/QuestionAnswers";
+import { useQuizGame } from "./hooks/useQuizGame";
 
 function App() {
-  const [player, setPlayer] = useState({
-    name: "",
-    score: 0,
-  });
-
-  // const [nearestValue, setNearestValue] = useState(10);
-  const nearestValue = 10;
-  const [selectedAnswers, setSelectedAnswers] = useState<
-    Record<number, number>
-  >({});
-  const [tempName, setTempName] = useState("");
-  const [showNameModal, setShowNameModal] = useState(true);
-
-  const alphabetNumbering = useMemo(() => ["a.", "b.", "c.", "d."], []);
-
-  const handleAnswerSelect = useCallback(
-    (questionNumber: number, answer: number) => {
-      setSelectedAnswers((prev) => ({
-        ...prev,
-        [questionNumber]: answer,
-      }));
-    },
-    []
-  );
-
-  const handleReset = useCallback(() => {
-    setPlayer((prev) => ({ ...prev, score: 0 }));
-    setSelectedAnswers({});
-  }, []);
-
-  const calculateCorrectAnswer = useCallback(
-    (number: number, roundTo: number) => {
-      return Math.round(number / roundTo) * roundTo;
-    },
-    []
-  );
-
-  const handleSubmit = useCallback(() => {
-    let correctCount = 0;
-    questionAnswers.forEach((qA) => {
-      const correctAnswer = calculateCorrectAnswer(qA.number, nearestValue);
-      if (selectedAnswers[qA.number] === correctAnswer) {
-        correctCount++;
-      }
-    });
-    setPlayer((prev) => ({ ...prev, score: correctCount }));
-  }, [selectedAnswers, nearestValue, calculateCorrectAnswer]);
-
-  const handleNameSubmit = useCallback(() => {
-    if (tempName.trim()) {
-      setPlayer((prev) => ({ ...prev, name: tempName.trim() }));
-      setShowNameModal(false);
-    }
-  }, [tempName]);
-
-  const handleKeyPress = useCallback(
-    (e: any) => {
-      if (e.key === "Enter") {
-        handleNameSubmit();
-      }
-    },
-    [handleNameSubmit]
-  );
+  const {
+    player,
+    nearestValue,
+    selectedAnswers,
+    tempName,
+    showNameModal,
+    alphabetNumbering,
+    setTempName,
+    handleAnswerSelect,
+    handleReset,
+    calculateCorrectAnswer,
+    handleSubmit,
+    handleNameSubmit,
+    handleKeyPress,
+  } = useQuizGame();
 
   const questionComponents = useMemo(() => {
     return questionAnswers.map((qA) => {
       const selectedAnswer = selectedAnswers[qA.number];
 
       return (
-        <div key={qA.number} className="my-1 text-left mx-auto">
-          <div className="py-0.5">
-            {qA.number} rounded off to the nearest {nearestValue.toString()} is
-          </div>
-          <div className="text-left w-full mx-auto py-1">
-            {qA.answers.map((answer, index) => {
-              const isSelected = selectedAnswer === answer;
-
-              return (
-                <button
-                  key={`${qA.number}-${index}-${answer}`}
-                  className={`py-1 flex cursor-pointer w-max transition-colors rounded-full ${
-                    isSelected
-                      ? "border-2 border-blue-500 bg-blue-50"
-                      : "hover:bg-gray-50"
-                  }`}
-                  onClick={() => handleAnswerSelect(qA.number, answer)}
-                >
-                  <div className="mr-1 rounded-full py-1 px-2">
-                    {alphabetNumbering[index]}
-                  </div>
-                  <p className="py-1 px-2">{answer}</p>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <QuestionAnswers
+          key={qA.number}
+          qA={qA}
+          nearestValue={nearestValue}
+          selectedAnswer={selectedAnswer}
+          alphabetNumbering={alphabetNumbering}
+          handleAnswerSelect={handleAnswerSelect}
+        />
       );
     });
   }, [
